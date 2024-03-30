@@ -5,9 +5,15 @@ public class Member extends User {
     private int goalWeight;
     private String goalWorkout;
 
+    // Default constructor
+    public Member() {
+        super();
+        setUserType(3);
+    }
+
     // Constructor
-    public Member(int id, String name, String password, int goalWeight, String goalWorkout) {
-        super(id, name, password);
+    public Member(int id, String name, String password, int userType, int goalWeight, String goalWorkout) {
+        super(id, name, password, 3);
         this.goalWeight = goalWeight;
         this.goalWorkout = goalWorkout;
     }

@@ -1,14 +1,21 @@
 //yaman
 package main;
 import java.util.List;
+import java.util.ArrayList;
 public class Trainer extends User {
-    private String specialty;
-    private String schedule; // Assuming a simple string representation for the schedule
+    private String schedule;
     private List<Member> members; // A list of Member objects this trainer is associated with
 
+    // Default constructor
+    public Trainer() {
+        super();
+        setUserType(Trainer);
+        this.members = new ArrayList<>(); // Initializes the list to avoid null pointer exceptions
+    }
+
     // Constructor
-    public Trainer(int id, String name, String password, String schedule, List<Member> members) {
-        super(id, name, password);
+    public Trainer(int id, String name, String password, int userType, String schedule, List<Member> members) {
+        super(id, name, password, 2);
         this.schedule = schedule;
         this.members = members;
     }
@@ -31,7 +38,6 @@ public class Trainer extends User {
         this.members = members;
     }
 
-    // Additional methods can be added here, e.g., to add/remove members, update schedule, etc.
 }
 
 

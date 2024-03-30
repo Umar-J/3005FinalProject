@@ -2,7 +2,10 @@ package main;
 
 public class User {
 
-    int id;
+    private int id;
+    private String firstName;
+    private String LastName;
+    private String password;
 
 
 }

@@ -1,9 +1,19 @@
+DROP TABLE IF EXISTS Sessions;
+DROP TABLE IF EXISTS equipment;
+DROP TABLE IF EXISTS TrainerAvailability;
+DROP TABLE IF EXISTS Achievements;
+DROP TABLE IF EXISTS MemberAttributes;
+DROP TABLE IF EXISTS Users;
+DROP TYPE IF EXISTS routine_type;
+
+CREATE TYPE routine_type AS ENUM ('upper', 'lower', 'cardio', 'full body', 'rest');
+
 CREATE TABLE Users (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    userType VARCHAR(50) NOT NULL
+    user_type VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE MemberAttributes (
@@ -14,8 +24,8 @@ CREATE TABLE MemberAttributes (
     height DECIMAL,
     weight DECIMAL,
     bf_percentage DECIMAL,
-    routineENUM VARCHAR(50),
-    paymentstatus VARCHAR(50),
+    routine routine_type,
+    payment_status VARCHAR(50),
     plan VARCHAR(255),   
     foreign key (id) references Users(id)
 );
@@ -30,12 +40,12 @@ CREATE TABLE TrainerAvailability (
     trainer_id INT PRIMARY KEY,
     start_time TIME,
     end_time TIME,
-    date VARCHAR(20),
+    date DATE,
     foreign key (trainer_id) references Users(id)
 );
 
 CREATE TABLE equipment (
-    equipment_id INT PRIMARY KEY,
+    equipment_id SERIAL PRIMARY KEY,
     name VARCHAR(255),
     check_update DATE,
     bool_is_available BOOLEAN

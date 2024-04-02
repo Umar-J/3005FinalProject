@@ -25,7 +25,7 @@ public class Main {
         if (choice == 1) {
             System.out.println("Sign in as: 1. New User 2. Existing user");
             int choice2 = scanner.nextInt();
-            switch (choice2){
+            switch (choice2) {
                 case 1:
                     //register new member
                     Member member = new Member();
@@ -34,14 +34,14 @@ public class Main {
                     try (Connection connection = DbUtil.connect();) {
                         addUserToDb(member);
                         member.addSelftoDatabase(connection);
+                        System.out.println("Congratulations! You have successfully registered!\nPlease sign in again to access your dashboard.");
+
                     } catch (Exception e) {
                         System.out.println(e);
                     }
-                    break;
-                //else if they are already a member
+                    //else if they are already a member
                 case 2:
                     boolean isExists = false;
-                    //Member member = new Member();
                     do {
                         member = new Member();
                         try (Connection connection = DbUtil.connect();) {
@@ -50,38 +50,40 @@ public class Main {
                             System.out.println(e);
                         }
                     } while (!isExists);
-                    System.out.println("==========Main Menu==========");
-                    System.out.println("1. View Dashboard\n2. Manage Profile\n3. Manage Schedule\n4. Exit");
-                    int userSelect = scanner.nextInt();
+                    boolean flag = true;
+                    do {
+                        System.out.println("==========Main Menu==========");
+                        System.out.println("1. View Dashboard\n2. Manage Profile\n3. Manage Schedule\n4. Exit");
+                        int userSelect = scanner.nextInt();
+                        switch (userSelect) {
+                            case 1:
+                                // view dashboard
+                                member.showDashboard();
+                                break;
+                            case 2:
+                                // print out information
+                                member.printInformation();
+                                System.out.println("Would you like to update your information? 1. yes 2. no");
+                                int update = scanner.nextInt();
+                                if (update == 1) {
+                                    member.updateInformation(scanner);
+                                }
+                                // manage profile
+                                break;
+                            case 3:
+                                // manage schedule
+                                member.manageSchedule(scanner);
+                                break;
+                            case 4:
+                                flag = false;
+                                // exit
+                                break;
+                            default:
+                                System.out.println("Invalid selection");
+                                break;
+                        }
 
-                    switch (userSelect) {
-                        case 1:
-                            // view dashboard
-                            member.showDashboard();
-                            break;
-                        case 2:
-                            // print out information
-                            member.printInformation();
-                            System.out.println("Would you like to update your information? 1. yes 2. no");
-                            int update = scanner.nextInt();
-                            if (update == 1) {
-                                member.updateInformation(scanner);
-                            }
-                            // manage profile
-                            break;
-                        case 3:
-                            // manage schedule
-                            member.manageSchedule(scanner);
-                            break;
-                        case 4:
-                            //make flag false to exit
-                            // exit
-                            break;
-                        default:
-                            System.out.println("Invalid selection");
-                            break;
-                    }
-                    break;
+                    }while (flag);
             }
             if (choice2 == 1) {
 

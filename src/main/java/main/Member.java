@@ -69,6 +69,8 @@ public class Member extends User {
         timeLine = LocalDate.parse(date);
         System.out.println("enter your goal workout");
         goalWorkout = scanner.next();
+        //clean the scanner
+        scanner.nextLine();
         System.out.println("enter your height");
         height = scanner.nextDouble();
         System.out.println("enter your weight");

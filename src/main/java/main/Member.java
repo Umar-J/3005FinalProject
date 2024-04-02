@@ -156,17 +156,21 @@ public class Member extends User {
         }
     }
     public void printInformation(){
-        System.out.println(("Information for Member ID:"+ getId()));
-        System.out.println("Name: " + getFirstName() + " " + getLastName());
-        System.out.println("Goal Weight: " + goalWeight);
-        System.out.println("Goal Workout: " + goalWorkout);
-        System.out.println("Height: " + height);
-        System.out.println("Weight: " + weight);
-        System.out.println("Body Fat Percentage: " + bf);
-        System.out.println("Routine: " + routine);
-        System.out.println("Payment Status: " + paymentStatus);
-        System.out.println("Plan: " + plan);
-        System.out.println("Timeline: " + timeLine);
+        System.out.println("--------------------------------------------------");
+        System.out.println("Information for Member ID: " + getId());
+        System.out.println("--------------------------------------------------");
+        System.out.println(String.format("Name: %-20s", getFirstName() + " " + getLastName()));
+        System.out.println(String.format("Goal Weight: %-15s", goalWeight + " lbs"));
+        System.out.println(String.format("Goal Workout: %-13s", goalWorkout));
+        System.out.println(String.format("Height: %-18s", height + " inches"));
+        System.out.println(String.format("Weight: %-17s", weight + " lbs"));
+        System.out.println(String.format("Body Fat Percentage: %-5s", bf + "%"));
+        System.out.println(String.format("Routine: %-17s", routine));
+        System.out.println(String.format("Payment Status: %-10s", paymentStatus));
+        System.out.println(String.format("Plan: %-20s", plan));
+        System.out.println(String.format("Timeline: %-16s", timeLine));
+        System.out.println("--------------------------------------------------");
+
 
 
     }
@@ -231,6 +235,33 @@ public class Member extends User {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+
+    }
+    public void showDashboard(){
+        System.out.println("--------------------------------------------------");
+        System.out.println("             Welcome to your dashboard            ");
+        System.out.println("--------------------------------------------------");
+        System.out.printf("Exercise Routines: %s%n", routine);
+        System.out.println("Health Stats:");
+        System.out.printf(" - Weight: %.2f lbs%n", weight);
+        System.out.printf(" - Height: %.2f inches%n", height);
+        System.out.printf(" - Body Fat Percentage: %.2f%%%n", bf);
+        System.out.println("--------------------------------------------------");
+        System.out.println("Fitness Achievements:");
+
+        // display fitness achievements (join member attributes with achievements
+        String sql = "select achievements_user from achievements where id = "+ getId();
+        try (Connection connection = DbUtil.connect();
+             Statement statement = connection.createStatement()) {
+            statement.executeQuery(sql);
+            ResultSet resultSet = statement.getResultSet();
+            while (resultSet.next()){
+                System.out.println(resultSet.getString("achievements_user"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        System.out.println("--------------------------------------------------");
 
     }
     public String toString(){

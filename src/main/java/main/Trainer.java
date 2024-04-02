@@ -1,5 +1,6 @@
 //yaman
 package main;
+import java.sql.Connection;
 import java.util.List;
 import java.util.ArrayList;
 public class Trainer extends User {
@@ -21,7 +22,9 @@ public class Trainer extends User {
     }
 
     // Getters and Setters
+    public void addSelftoDatabase(Connection conn){
 
+    }
     public String getSchedule() {
         return schedule;
     }

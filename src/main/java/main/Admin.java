@@ -1,6 +1,8 @@
 //yaman
 package main;
 
+import java.sql.Connection;
+
 public class Admin extends User {
 
     // Default constructor
@@ -13,7 +15,9 @@ public class Admin extends User {
     public Admin(int id, String name, String password, int userType) {
         super(id, name, password, 1);
     }
+    public void addSelftoDatabase(Connection conn){
 
+    }
 
 }
 

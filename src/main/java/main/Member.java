@@ -273,6 +273,15 @@ public class Member extends User {
         switch (choice){
             case 1:
                 //viewSchedule();
+                /*
+                how to do this:
+                get from table sessions: start time, end time, trainer id, and check that member id is empty, and boolean
+                split if bool then here
+                group:
+                or if false then here
+                let them pick session id(check if has members or no)
+                then update the session table with member id
+                 */
                 break;
             case 2:
                // updateSchedule(scanner);

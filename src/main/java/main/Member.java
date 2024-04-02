@@ -264,6 +264,21 @@ public class Member extends User {
         System.out.println("--------------------------------------------------");
 
     }
+    public void manageSchedule(Scanner scanner){
+        System.out.println("What would you like to do?");
+        System.out.println("1. View Schedule\n2. Update Schedule\n3. Exit");
+        int choice = scanner.nextInt();
+        switch (choice){
+            case 1:
+                //viewSchedule();
+                break;
+            case 2:
+               // updateSchedule(scanner);
+                break;
+            case 3:
+                break;
+        }
+    }
     public String toString(){
         return "Member: " + getName() + " with goal weight: " + goalWeight + " and goal workout: " + goalWorkout;
     }

@@ -25,29 +25,16 @@ public class Main {
             System.out.println("are you: 1. new user 2. existing user");
             int choice2 = scanner.nextInt();
             if (choice2 == 1) {
-                // Member member = new Member();
-                System.out.println("enter your first name");
-                //member.firstname = scanner.next();
-                System.out.println("enter your last name");
-                //member.lastname = scanner.next();
-                System.out.println("enter your password");
-                //member.password = scanner.next();
-                //Goal_weight, goal_workout, height,weight, bf%, routineENUM, paymentstatus, plan
-                System.out.println("enter your goal weight");
-                //member.goal_weight = scanner.nextInt();
-                System.out.println("enter your goal workout");
-                //member.goal_workout = scanner.next();
-                System.out.println("enter your height");
-                //member.height = scanner.nextInt();
-                System.out.println("enter your weight");
-                //member.weight = scanner.nextInt();
-                System.out.println("enter your body fat percentage");
-                //member.bf = scanner.nextInt();
-                System.out.println("enter your routine");
-                //member.routine = scanner.next();
-                //calculate payment plan by goal workout
-                //payment?
-                //write member to database
+                Member member = new Member();
+                member.initializeMember(scanner);
+                // add to db
+                try (Connection connection = DbUtil.connect();) {
+                    addUserToDb(member);
+                    member.addSelftoDatabase(connection);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+
             } else if (choice2 == 2){
                 System.out.println("enter your first name");
                 String firstname = scanner.next();
@@ -109,6 +96,13 @@ public class Main {
                 String password = scanner.next();
                 // check if admin exists
             }
+        }
+    }
+    public static void addUserToDb(User user){
+        try (Connection connection = DbUtil.connect();) {
+            user.addtoDatabase(connection);
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 }

@@ -18,11 +18,12 @@ public class Main {
         } catch (Exception e) {
             System.out.println(e);
         }
-        System.out.println("welcome to gym \n are you 1. member 2. trainer or 3. admin");
+        System.out.println("============Welcome to gym============\nAre you 1. Member 2. trainer 3. admin");
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
+        // if they are registering
         if (choice == 1){
-            System.out.println("are you: 1. new user 2. existing user");
+            System.out.println("Sign in as: 1. new user 2. existing user");
             int choice2 = scanner.nextInt();
             if (choice2 == 1) {
                 Member member = new Member();
@@ -35,16 +36,37 @@ public class Main {
                     System.out.println(e);
                 }
 
+            //else if they are already a user
             } else if (choice2 == 2){
-                System.out.println("enter your first name");
-                String firstname = scanner.next();
-                System.out.println("enter your last name");
-                String lastname = scanner.next();
-                System.out.println("enter your password");
-                String password = scanner.next();
-                // check if user exists
+                boolean isExists = false;
+                Member member = new Member();
+                do {
+                    member = new Member();
+                    try (Connection connection = DbUtil.connect();) {
+                        isExists = member.authenticateMember(scanner, connection);
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                } while (!isExists);
+                System.out.println("==========Main Menu==========");
+                System.out.println("1. View Dashboard\n2. Manage Profile\n3. Manage Schedule");
+                int userSelect = scanner.nextInt();
+                if (userSelect == 1){
+
+                }else if (userSelect == 2){
+                    // print out information
+                    member.printInformation();
+                    System.out.println("Would you like to update your information? 1. yes 2. no");
+                    int update = scanner.nextInt();
+                    if (update == 1){
+                        member.updateInformation(scanner);
+                    }
+                }
+
 
             }
+            // Trainer functions
+            // TODO: for ammar
         }else if (choice == 2){
             System.out.println("are you: 1. new trainer 2. existing trainer");
             //start time, endtime, date(monday-sunday)

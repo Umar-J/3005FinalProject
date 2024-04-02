@@ -3,9 +3,12 @@ package main;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.Scanner;
 import java.sql.Connection;
+import java.sql.ResultSet;
+
 
 
 public class Member extends User {
@@ -84,6 +87,42 @@ public class Member extends User {
         //write member to database
 
     }
+    public boolean authenticateMember(Scanner scanner, Connection connection) throws SQLException {
+        System.out.println("enter your first name");
+        setFirstName(scanner.next());
+        System.out.println("enter your last name");
+        setLastName(scanner.next());
+        System.out.println("enter your password");
+        setPassword(scanner.next());
+        if(authenticate(connection)){
+            //populate member object
+            populateMember(connection);
+            return true;
+        }else{
+            return false;
+        }
+        // check if member exists
+    }
+    public void populateMember(Connection connection) throws SQLException {
+        //populate member object
+        System.out.println("populating member object");
+        String sql = "SELECT * FROM MemberAttributes WHERE id = "+getId();
+        Statement statement = connection.createStatement();
+        statement.executeQuery(sql);
+        ResultSet resultSet = statement.getResultSet();
+        resultSet.next();
+        goalWeight = resultSet.getInt("goal_weight");
+        timeLine = resultSet.getDate("timeline").toLocalDate();
+        goalWorkout = resultSet.getString("goal_workout");
+        height = resultSet.getDouble("height");
+        weight = resultSet.getDouble("weight");
+        bf = resultSet.getDouble("bf_percentage");
+        routine = resultSet.getString("routine");
+        paymentStatus = Boolean.parseBoolean(resultSet.getString("payment_status"));
+        plan = Integer.parseInt(resultSet.getString("plan"));
+
+
+    }
     public void addSelftoDatabase(Connection connection){
         System.out.println("adding self to database");
         //write member to database
@@ -115,5 +154,86 @@ public class Member extends User {
         } else if (goalWorkout.equals("maintain")) {
             plan = 3;
         }
+    }
+    public void printInformation(){
+        System.out.println(("Information for Member ID:"+ getId()));
+        System.out.println("Name: " + getFirstName() + " " + getLastName());
+        System.out.println("Goal Weight: " + goalWeight);
+        System.out.println("Goal Workout: " + goalWorkout);
+        System.out.println("Height: " + height);
+        System.out.println("Weight: " + weight);
+        System.out.println("Body Fat Percentage: " + bf);
+        System.out.println("Routine: " + routine);
+        System.out.println("Payment Status: " + paymentStatus);
+        System.out.println("Plan: " + plan);
+        System.out.println("Timeline: " + timeLine);
+
+
+    }
+    public void updateInformation(Scanner scanner){
+        System.out.println("What would you like to update?");
+        System.out.println("1. Goal Weight\n2. Goal Workout\n3. Height\n4. Weight\n5. Body Fat Percentage\n6. Routine\n7. Timeline");
+        int choice = scanner.nextInt();
+        switch (choice){
+            case 1:
+                System.out.println("Enter new goal weight");
+                goalWeight = scanner.nextInt();
+                break;
+            case 2:
+                System.out.println("Enter new goal workout");
+                goalWorkout = scanner.next();
+                break;
+            case 3:
+                System.out.println("Enter new height");
+                height = scanner.nextDouble();
+                break;
+            case 4:
+                System.out.println("Enter new weight");
+                weight = scanner.nextDouble();
+                break;
+            case 5:
+                System.out.println("Enter new body fat percentage");
+                bf = scanner.nextDouble();
+                break;
+            case 6:
+                System.out.println("Enter new routine");
+                routine = scanner.next();
+                break;
+            case 7:
+                System.out.println("Enter new timeline");
+                String date = scanner.next();
+                timeLine = LocalDate.parse(date);
+                break;
+        }
+        sendUpdates();
+    }
+    private void sendUpdates(){
+        //send updates to database
+
+        System.out.println("updating self to database");
+        //write member to database
+        String sql = "UPDATE MemberAttributes SET goal_weight = ?, timeline = ?, goal_workout = ?, height = ?, weight = ?, bf_percentage = ?, routine = ?, payment_status = ?, plan = ? WHERE id = "+ getId();
+        try (Connection connection = DbUtil.connect();
+                PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            // Set parameters for the prepared statement
+            pstmt.setDouble(1, goalWeight);
+            pstmt.setObject(2, timeLine);
+            pstmt.setString(3, goalWorkout);
+            pstmt.setDouble(4, height);
+            pstmt.setDouble(5, weight);
+            pstmt.setDouble(6, bf);
+            pstmt.setString(7, routine);
+            pstmt.setString(8, Boolean.toString(paymentStatus));
+            pstmt.setString(9, Integer.toString(plan));
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+    public String toString(){
+        return "Member: " + getName() + " with goal weight: " + goalWeight + " and goal workout: " + goalWorkout;
     }
 }

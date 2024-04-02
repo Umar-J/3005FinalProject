@@ -109,6 +109,36 @@ public abstract class User {
     public String getName() {
         return name;
     }
+    public boolean authenticate(Connection connection) {
+        System.out.println("authenticating user");
+        try {
+            String query = "SELECT * FROM users WHERE first_name = ? AND last_name = ? AND password = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, firstName);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setString(3, password);
+            preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.getResultSet();
+            resultSet.next();
+            try{
+                resultSet.getInt("id");
+            }catch (SQLException e){
+                System.out.println("user no exist");
+                return false;
+            }
+            id = resultSet.getInt("id");
+            userTypeString = resultSet.getString("user_type");
+            firstName = resultSet.getString("first_name");
+            lastName = resultSet.getString("last_name");
+            setId(id);
+            setUserType(userType);
+            System.out.println("User found with id: " + id + " and user type: " + userType + " and name: " + firstName + " " + lastName);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
     public abstract void addSelftoDatabase(Connection connection);
 
     public void addtoDatabase(Connection connection) {
@@ -118,7 +148,7 @@ public abstract class User {
             preparedStatement.setString(1, firstName);
             preparedStatement.setString(2, lastName);
             preparedStatement.setString(3, password);
-            preparedStatement.setInt(4, userType);
+            preparedStatement.setString(4, userTypeString);
             preparedStatement.executeUpdate();
             initID(); //sets id for further adding member or whatever else
         } catch (SQLException e) {

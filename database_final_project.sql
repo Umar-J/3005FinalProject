@@ -24,14 +24,14 @@ CREATE TABLE MemberAttributes (
     height DECIMAL,
     weight DECIMAL,
     bf_percentage DECIMAL,
-    routine routine_type,
+    routine VARCHAR(255),
     payment_status VARCHAR(50),
     plan VARCHAR(255),   
     foreign key (id) references Users(id)
 );
 
 CREATE TABLE Achievements (
-    id INT PRIMARY KEY,
+    id INT,
     achievements_user VARCHAR(255),
     foreign key (id) references Users(id)
 );
@@ -40,7 +40,8 @@ CREATE TABLE TrainerAvailability (
     trainer_id INT PRIMARY KEY,
     start_time TIME,
     end_time TIME,
-    date DATE,
+    start_date DATE,
+	end_date DATE,
     foreign key (trainer_id) references Users(id)
 );
 

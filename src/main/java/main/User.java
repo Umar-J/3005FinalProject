@@ -132,7 +132,7 @@ public abstract class User {
             lastName = resultSet.getString("last_name");
             setId(id);
             setUserType(userType);
-            System.out.println("User found with id: " + id + " and user type: " + userType + " and name: " + firstName + " " + lastName);
+            System.out.println("User found! \nUser details: \n id: " + id + " \n user type: " + userType + "\n name: " + firstName + " " + lastName);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();

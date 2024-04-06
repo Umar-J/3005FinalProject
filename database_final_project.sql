@@ -40,7 +40,8 @@ CREATE TABLE TrainerAvailability (
     trainer_id INT PRIMARY KEY,
     start_time TIME,
     end_time TIME,
-    date DATE,
+    start_date DATE,
+	end_date DATE,
     foreign key (trainer_id) references Users(id)
 );
 

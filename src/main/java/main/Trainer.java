@@ -72,6 +72,23 @@ public class Trainer extends User {
 
     public void setEndDate(Date endDate){ this.endDate = endDate; }
 
+    public Time getStartTime() {
+        return this.startTime;
+    }
+
+    public Time getEndTime() {
+
+        return this.endTime;
+    }
+
+    public Date getStartDate() {
+        return this.startDate;
+    }
+
+    public Date getEndDate() {
+        return this.endDate;
+    }
+
 
     public void viewMember(String name){
         for (int i = 0; i < members.size(); ++i){
@@ -93,9 +110,9 @@ public class Trainer extends User {
         System.out.println("enter your password");
         setPassword(scanner.next());
         System.out.println("enter your start time (format: hh:mm:ss):");
-        setStartTime(Time.valueOf(scanner.next()));
+        this.startTime = Time.valueOf(scanner.next());
         System.out.println("enter your end time (format: hh:mm:ss): ");
-        setEndTime(Time.valueOf(scanner.next()));
+        this.endTime = Time.valueOf(scanner.next());
         System.out.println("enter your start date (format: yyyy-mm-dd): ");
         setStartDate(Date.valueOf(scanner.next()));
         System.out.println("enter your end date (format: yyyy-mm-dd): ");
@@ -112,7 +129,7 @@ public class Trainer extends User {
         setPassword(scanner.next());
         if(authenticate(connection)){
             //populate member object
-            populateTrainer(connection);
+            //populateTrainer(connection);
             return true;
         }else{
             return false;
@@ -135,6 +152,74 @@ public class Trainer extends User {
         endDate = resultSet.getDate("end_date");
 
     }
+
+    public void showSessions(){
+        System.out.println("sessions: \n ");
+        String sql = "SELECT * FROM Sessions WHERE trainer_id = "+getId();
+        try (Connection connection = DbUtil.connect();) {
+            Statement statement = connection.createStatement();
+            statement.executeQuery(sql);
+            ResultSet resultSet = statement.getResultSet();
+            while (resultSet.next()) {
+                System.out.println("Session ID: " + resultSet.getInt("session_id"));
+                System.out.println("Trainer ID: " + resultSet.getInt("trainer_id"));
+                System.out.println("Member ID: " + resultSet.getInt("member_id"));
+                System.out.println("Start Time: " + resultSet.getTime("start_time"));
+                System.out.println("End Time: " + resultSet.getTime("end_time"));
+                System.out.println("Date: " + resultSet.getDate("date"));
+                System.out.println("Room Number: " + resultSet.getInt("room_number"));
+                //System.out.println(": " + resultSet.getDate("end_date"));
+                System.out.println();
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
+    public void printInformation(){
+        System.out.println("Trainer Information: \n ");
+        System.out.println("Trainer ID: " + getId());
+        System.out.println("First Name: " + getFirstName());
+        System.out.println("Last Name: " + getLastName());
+        System.out.println("Start Time: " + getStartTime());
+        System.out.println("End Time: " + getEndTime());
+        System.out.println("Start Date: " + getStartDate());
+        System.out.println("End Date: " + getEndDate());
+        System.out.println();
+
+    }
+
+    public void addSession(Scanner scanner){
+        
+        System.out.println("adding session to database");
+        System.out.println("enter your start time (format: hh:mm:ss):");
+        Time startTimeOfSession = Time.valueOf(scanner.next());
+        System.out.println("enter your end time (format: hh:mm:ss): ");
+        Time endTimeOfSession = Time.valueOf(scanner.next());
+        System.out.println("enter your date (format: yyyy-mm-dd): ");
+        Date dateOfSession = Date.valueOf(scanner.next());
+        System.out.println("enter your room number: ");
+        int roomNumber = scanner.nextInt();
+
+        String sql = "INSERT INTO Sessions (trainer_id, start_time, end_time, date, room_number) VALUES (?, ?, ?, ?, ?)";
+        try (Connection connection = DbUtil.connect();) {
+            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                pstmt.setInt(1, getId());
+                pstmt.setTime(2, startTimeOfSession);
+                pstmt.setTime(3, endTimeOfSession);
+                pstmt.setDate(4, dateOfSession);
+                pstmt.setInt(5, roomNumber);
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 
 
 }

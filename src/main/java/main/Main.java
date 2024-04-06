@@ -20,7 +20,7 @@ public class Main {
             System.out.println(e);
         }
         //Program starts
-        System.out.println("============Welcome to gym============\nAre you 1. Member 2. trainer 3. admin");
+        System.out.println("============Welcome to gym============\nAre you 1. Member 2. Trainer 3. Admin");
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
         // if they are registering
@@ -93,34 +93,77 @@ public class Main {
 
 
             }
-            // Trainer functions
-            // TODO: for ammar
-        }else if (choice == 2) {
-            System.out.println("are you: 1. new trainer 2. existing trainer");
-            //start time, endtime, date(monday-sunday)
-            int choice3 = scanner.nextInt();
-            if (choice3 == 1) {
-                Trainer trainer = new Trainer();
-                trainer.initializeTrainer(scanner);
-                // add to db
-                try (Connection connection = DbUtil.connect();) {
-                    addUserToDb(trainer);
-                    trainer.addSelftoDatabase(connection);
-                    //System.out.println("Congratulations! You have successfully registered!\nPlease sign in again to access your dashboard.");
 
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-                //write trainer to database
-            } else if (choice3 == 2) {
-                // check if trainer exists
-                Trainer trainer = new Trainer();
-                try (Connection connection = DbUtil.connect();) {
-                    trainer.authenticateTrainer(scanner, connection);
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
+        }
+        // Trainer functions
+        // TODO: for ammar
+        else if (choice == 2) {
+            System.out.println("Are you: 1. New Trainer 2. Existing Trainer");
+            int typeOfTrainer = scanner.nextInt();
+            switch (typeOfTrainer) {
+                case 1:
+                    Trainer trainer = new Trainer();
+                    trainer.initializeTrainer(scanner);
+                    // add to db
+                    try (Connection connection = DbUtil.connect();) {
+                        addUserToDb(trainer);
+                        trainer.addSelftoDatabase(connection);
+                        //System.out.println("Congratulations! You have successfully registered!\nPlease sign in again to access your dashboard.");
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    //write trainer to database
+                    break;
+                case 2:
+                    boolean isExists = false;
+                    do {
+                        // check if trainer exists
+                        trainer = new Trainer();
+                        try (Connection connection = DbUtil.connect();) {
+                            isExists = trainer.authenticateTrainer(scanner, connection);
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                    } while (!isExists);
+                    boolean flag = true;
+                    do {
+                        System.out.println("==========Main Menu==========");
+                        System.out.println("1. View Sessions\n2. View Profile\n3. Add Session\n4. Exit");
+                        int userSelect = scanner.nextInt();
+                        switch (userSelect) {
+                            case 1:
+                                // view sessions
+                                trainer.showSessions();
+                                break;
+                            case 2:
+                                // print out information
+                                trainer.printInformation();
+                                //System.out.println("Would you like to update your information? 1. yes 2. no");
+//                                int update = scanner.nextInt();
+//                                if (update == 1) {
+//                                    member.updateInformation(scanner);
+//                                }
+                                // manage profile
+                                break;
+                            case 3:
+                                // manage schedule
+                                trainer.addSession(scanner);
+                                break;
+                            case 4:
+                                flag = false;
+                                // exit
+                                break;
+                            default:
+                                System.out.println("Invalid selection");
+                                break;
+                        }
+                    } while (flag);
+                    break;
+                default:
+                    System.out.println("Invalid type of trainer");
+                    break;
             }
+
 
         } else if (choice == 3) {
             System.out.println("are you: 1. new admin 2. existing admin");

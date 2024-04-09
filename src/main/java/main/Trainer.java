@@ -5,16 +5,17 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.time.LocalTime;
 
 public class Trainer extends User {
     private String schedule;
     private List<Member> members; // A list of Member objects this trainer is associated with
 
-    private Time startTime;
-    private Time endTime;
-    private Date startDate;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private LocalDate startDate;
 
-    private Date endDate;
+    private LocalDate endDate;
 
     // Default constructor
     public Trainer() {
@@ -39,10 +40,10 @@ public class Trainer extends User {
 
             // Set parameters for the prepared statement
             pstmt.setInt(1, getId());
-            pstmt.setTime(2, startTime);
-            pstmt.setTime(3,endTime);
-            pstmt.setDate(4, startDate);
-            pstmt.setDate(5, endDate);
+            pstmt.setObject(2, startTime);
+            pstmt.setObject(3,endTime);
+            pstmt.setObject(4, startDate);
+            pstmt.setObject(5, endDate);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -64,28 +65,28 @@ public class Trainer extends User {
         this.members = members;
     }
 
-    public void setStartTime(Time startTime){ this.startTime = startTime; }
+    public void setStartTime(LocalTime startTime){ this.startTime = startTime; }
 
-    public void setEndTime(Time endTime){ this.endTime = endTime; }
+    public void setEndTime(LocalTime endTime){ this.endTime = endTime; }
 
-    public void setStartDate(Date startDate){ this.startDate = startDate; }
+    public void setStartDate(LocalDate startDate){ this.startDate = startDate; }
 
-    public void setEndDate(Date endDate){ this.endDate = endDate; }
+    public void setEndDate(LocalDate endDate){ this.endDate = endDate; }
 
-    public Time getStartTime() {
+    public LocalTime getStartTime() {
         return this.startTime;
     }
 
-    public Time getEndTime() {
+    public LocalTime getEndTime() {
 
         return this.endTime;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return this.startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return this.endDate;
     }
 
@@ -110,13 +111,17 @@ public class Trainer extends User {
         System.out.println("enter your password");
         setPassword(scanner.next());
         System.out.println("enter your start time (format: hh:mm:ss):");
-        this.startTime = Time.valueOf(scanner.next());
+        String time = scanner.next();
+        this.startTime = LocalTime.parse(time);
         System.out.println("enter your end time (format: hh:mm:ss): ");
-        this.endTime = Time.valueOf(scanner.next());
+        String time2 = scanner.next();
+        this.endTime = LocalTime.parse(time2);
         System.out.println("enter your start date (format: yyyy-mm-dd): ");
-        setStartDate(Date.valueOf(scanner.next()));
+        String Date = scanner.next();
+        this.startDate = LocalDate.parse(Date);
         System.out.println("enter your end date (format: yyyy-mm-dd): ");
-        setEndDate(Date.valueOf(scanner.next()));
+        String date2 = scanner.next();
+        setEndDate(LocalDate.parse(date2));
 
     }
 
@@ -129,7 +134,7 @@ public class Trainer extends User {
         setPassword(scanner.next());
         if(authenticate(connection)){
             //populate member object
-            //populateTrainer(connection);
+            populateTrainer(connection);
             return true;
         }else{
             return false;
@@ -146,10 +151,10 @@ public class Trainer extends User {
         ResultSet resultSet = statement.getResultSet();
         resultSet.next();
         //setId(); = resultSet.getInt("trainer_id");
-        startTime = resultSet.getTime("start_time");
-        endTime = resultSet.getTime("end_time");
-        startDate = resultSet.getDate("start_date");
-        endDate = resultSet.getDate("end_date");
+        startTime = resultSet.getTime("start_time").toLocalTime();
+        endTime = resultSet.getTime("end_time").toLocalTime();
+        startDate = resultSet.getDate("start_date").toLocalDate();
+        endDate = resultSet.getDate("end_date").toLocalDate();
 
     }
 
@@ -165,6 +170,7 @@ public class Trainer extends User {
                 System.out.println("Trainer ID: " + resultSet.getInt("trainer_id"));
                 System.out.println("Member ID: " + resultSet.getInt("member_id"));
                 System.out.println("Start Time: " + resultSet.getTime("start_time"));
+                System.out.println("Group Session?: " + resultSet.getBoolean("is_group"));
                 System.out.println("End Time: " + resultSet.getTime("end_time"));
                 System.out.println("Date: " + resultSet.getDate("date"));
                 System.out.println("Room Number: " + resultSet.getInt("room_number"));
@@ -179,14 +185,16 @@ public class Trainer extends User {
 
 
     public void printInformation(){
+        // init trainer object
+
         System.out.println("Trainer Information: \n ");
         System.out.println("Trainer ID: " + getId());
         System.out.println("First Name: " + getFirstName());
         System.out.println("Last Name: " + getLastName());
-        System.out.println("Start Time: " + getStartTime());
-        System.out.println("End Time: " + getEndTime());
-        System.out.println("Start Date: " + getStartDate());
-        System.out.println("End Date: " + getEndDate());
+        System.out.println("Start Time: " + startTime.toString());
+        System.out.println("End Time: " + endTime);
+        System.out.println("Start Date: " + startDate.toString());
+        System.out.println("End Date: " + endDate);
         System.out.println();
 
     }
@@ -202,8 +210,11 @@ public class Trainer extends User {
         Date dateOfSession = Date.valueOf(scanner.next());
         System.out.println("enter your room number: ");
         int roomNumber = scanner.nextInt();
+        System.out.println("is this a group session? (true/false): ");
+        boolean isGroup = scanner.nextBoolean();
 
-        String sql = "INSERT INTO Sessions (trainer_id, start_time, end_time, date, room_number) VALUES (?, ?, ?, ?, ?)";
+
+        String sql = "INSERT INTO Sessions (trainer_id, start_time, end_time, date, room_number, is_group) VALUES (?, ?, ?, ?, ?,?)";
         try (Connection connection = DbUtil.connect();) {
             try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
                 pstmt.setInt(1, getId());
@@ -211,6 +222,7 @@ public class Trainer extends User {
                 pstmt.setTime(3, endTimeOfSession);
                 pstmt.setDate(4, dateOfSession);
                 pstmt.setInt(5, roomNumber);
+                pstmt.setBoolean(6, isGroup);
                 pstmt.executeUpdate();
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
@@ -219,8 +231,6 @@ public class Trainer extends User {
             System.out.println(e.getMessage());
         }
     }
-
-
 
 }
 

@@ -80,11 +80,8 @@ public class Member extends User {
         System.out.println("enter your routine: 'upper', 'lower', 'cardio', 'full body', 'rest'");
         routine = scanner.next();
         //calculate payment plan by goal workout
-        if (goalWorkout.equals("weight loss")) {
-            paymentStatus = false;
-        }else{
-            paymentStatus = true;
-        }
+        paymentStatus = false;
+
         //payment
         //write member to database
 
@@ -120,7 +117,8 @@ public class Member extends User {
         weight = resultSet.getDouble("weight");
         bf = resultSet.getDouble("bf_percentage");
         routine = resultSet.getString("routine");
-        paymentStatus = Boolean.parseBoolean(resultSet.getString("payment_status"));
+        paymentStatus = resultSet.getBoolean("payment_status");
+        //paymentStatus = Boolean.parseBoolean(resultSet.getString("payment_status"));
         plan = Integer.parseInt(resultSet.getString("plan"));
 
 
@@ -141,7 +139,8 @@ public class Member extends User {
             pstmt.setDouble(6, weight);
             pstmt.setDouble(7, bf);
             pstmt.setString(8, routine);
-            pstmt.setString(9, Boolean.toString(paymentStatus));
+            pstmt.setBoolean(9, paymentStatus);
+
             pstmt.setString(10, Integer.toString(plan));
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -268,12 +267,53 @@ public class Member extends User {
     }
     public void manageSchedule(Scanner scanner){
         System.out.println("What would you like to do?");
-        System.out.println("1. View Schedule\n2. Update Schedule\n3. Exit");
+        System.out.println("1. View Schedule\n2. Update Schedule (register/unregister for class)\n3. Exit");
         int choice = scanner.nextInt();
         switch (choice){
             case 1:
-                //viewSchedule();
-                /*
+                // to show personal registered sessions
+                viewSchedule();
+
+                break;
+            case 2:
+               // updateSchedule(scanner);
+                updateSchedule(scanner);
+                break;
+            case 3:
+                break;
+        }
+    }
+    public void viewSchedule(){
+        // view schedule
+        // get from table - sessions user is registered to (member_id)  = id
+        if (numSession() == 0){
+            System.out.println("You are not registered for any sessions");
+            return;
+        }
+        System.out.println("Sessions you are registered for: \n ");
+        String sql = "SELECT * FROM Sessions WHERE member_id = "+getId();
+        try (Connection connection = DbUtil.connect();) {
+            Statement statement = connection.createStatement();
+            statement.executeQuery(sql);
+            ResultSet resultSet = statement.getResultSet();
+            while (resultSet.next()) {
+                System.out.println("Session ID: " + resultSet.getInt("session_id"));
+                System.out.println("Trainer ID: " + resultSet.getInt("trainer_id"));
+                System.out.println("Member ID: " + resultSet.getInt("member_id"));
+                System.out.println("Start Time: " + resultSet.getTime("start_time"));
+                System.out.println("Group Session?: " + resultSet.getBoolean("is_group"));
+                System.out.println("End Time: " + resultSet.getTime("end_time"));
+                System.out.println("Date: " + resultSet.getDate("date"));
+                System.out.println("Room Number: " + resultSet.getInt("room_number"));
+                //System.out.println(": " + resultSet.getDate("end_date"));
+                System.out.println();
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    public void updateSchedule(Scanner scanner){
+        /*
                 how to do this:
                 get from table sessions: start time, end time, trainer id, and check that member id is empty, and boolean
                 split if bool then here
@@ -282,13 +322,143 @@ public class Member extends User {
                 let them pick session id(check if has members or no)
                 then update the session table with member id
                  */
+        System.out.println("Would you like to register or unregister for a session? 1. Register 2. Unregister");
+        int choice = scanner.nextInt();
+        switch (choice){
+            case 1:
+                // register
+                System.out.println("Are you registering for a group session or individual session? 1. Group 2. Individual");
+                int group = scanner.nextInt();
+                switch (group){
+                    case 1:
+                        // group sessions
+                        // show available group sessions
+                        showSessionGroups(true);
+                        // let them pick session id
+                        registerForSession(scanner);
+                        // update session table with member id
+                        break;
+                    case 2:
+                        // individual
+                        // show available sessions
+                        showSessionGroups(false);
+                        // let them pick session id
+                        registerForSession(scanner);
+                        // update session table with member id
+                        break;
+                }
                 break;
             case 2:
-               // updateSchedule(scanner);
-                break;
-            case 3:
-                break;
+                // unregister
+                System.out.println("Unregistering sessions");
+                // show registered sessions
+                if (numSession() == 0){
+                    System.out.println("You are not registered for any sessions");
+
+                }else {
+                    viewSchedule();
+                    // let them pick session id
+                    // update session table with member id =0
+                    unRegisterSessions(scanner);
+                    break;
+                }
         }
+
+        // if register
+            // group or individual
+                // show available sessions (with id =0) and bool if group
+        // if unregister
+            // show registered sessions if any
+            // update session table with member id =0
+            // or else
+        // say no registerd sessions and return
+
+    }
+    private int numSession(){
+        // get number of sessions
+        // get from table sessions user is registered to (member_id)  = id
+        String sql = "SELECT COUNT(*) FROM Sessions WHERE member_id = "+getId();
+        try (Connection connection = DbUtil.connect();
+             Statement statement = connection.createStatement()) {
+            statement.executeQuery(sql);
+            ResultSet resultSet = statement.getResultSet();
+            resultSet.next();
+            return resultSet.getInt(1);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+    public void showSessionGroups(boolean group){
+        // show available sessions
+        // get from table sessions: start time, end time, trainer id, and check that member id is empty, and boolean
+        // split if bool then here
+        // group:
+        // or if false then here
+        System.out.println("Showing sessions for group: \n " + group);
+        String sql;
+        if (group){
+             sql = "SELECT * FROM Sessions WHERE member_id is null and is_group is not null";
+        }else{
+             sql = "SELECT * FROM Sessions WHERE member_id is null AND is_group is null";
+        }
+
+        try (Connection connection = DbUtil.connect();) {
+            Statement statement = connection.createStatement();
+            statement.executeQuery(sql);
+            ResultSet resultSet = statement.getResultSet();
+            while (resultSet.next()) {
+                System.out.println("Session ID: " + resultSet.getInt("session_id"));
+                System.out.println("Trainer ID: " + resultSet.getInt("trainer_id"));
+                //System.out.println("Member ID: " + resultSet.getInt("member_id"));
+                System.out.println("Start Time: " + resultSet.getTime("start_time"));
+                //System.out.println("Group Session?: " + resultSet.getBoolean("is_group"));
+                System.out.println("End Time: " + resultSet.getTime("end_time"));
+                System.out.println("Date: " + resultSet.getDate("date"));
+                System.out.println("Room Number: " + resultSet.getInt("room_number"));
+                //System.out.println(": " + resultSet.getDate("end_date"));
+                System.out.println();
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    public void registerForSession(Scanner scanner){
+        System.out.println("Would you like to register for a session? 1. Yes 2. No");
+        int choice = scanner.nextInt();
+        if (choice == 2) {
+            return;
+        }
+        System.out.println("enter the # for session id you want to register for");
+        int sessionID = scanner.nextInt();
+        // update session table with member id
+        String sql = "UPDATE Sessions SET member_id = ? WHERE session_id = "+ sessionID;
+        try (Connection connection = DbUtil.connect();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, getId());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    private void unRegisterSessions(Scanner scanner){
+        System.out.println("Would you like to unregister for a session? 1. Yes 2. No");
+        int choice = scanner.nextInt();
+        if (choice == 2) {
+            return;
+        }
+        System.out.println("enter the # for session id you want to unregister from");
+        int sessionID = scanner.nextInt();
+        // update session table with member id to null
+        String sql = "UPDATE Sessions SET member_id = null WHERE session_id = ?" ;
+        try (Connection connection = DbUtil.connect();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, sessionID);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
     }
     public String toString(){
         return "Member: " + getName() + " with goal weight: " + goalWeight + " and goal workout: " + goalWorkout;

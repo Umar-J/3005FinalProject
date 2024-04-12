@@ -2,6 +2,7 @@
 package main;
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -99,7 +100,50 @@ public class Trainer extends User {
         }
         System.out.println("Member not found in trainer list!");
     }
+public void viewMembers(){
+        //get sessions from db where trainer_id = this.id
+        //get members from sessions that have trainer_id = this.id
+        //print members
+        System.out.println("Members: \n ");
+        String sql = "SELECT * FROM Sessions WHERE trainer_id = "+getId();
+        HashSet<Integer> memberIds2 = new HashSet<>();
+        try (Connection connection = DbUtil.connect();) {
+            Statement statement = connection.createStatement();
+            statement.executeQuery(sql);
+            ResultSet resultSet = statement.getResultSet();
+            while (resultSet.next()) {
+                memberIds2.add(resultSet.getInt("member_id"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        // use memberIds to get member names
+        List<Integer> memberIds = new ArrayList<>(memberIds2);
+        for (int i = 0; i < memberIds.size(); ++i){
+            String sql2 = "SELECT * FROM users JOIN memberattributes ON users.id = memberattributes.id WHERE users.id = "+memberIds.get(i);
+            try (Connection connection = DbUtil.connect();) {
+                Statement statement = connection.createStatement();
+                statement.executeQuery(sql2);
+                ResultSet resultSet = statement.getResultSet();
+                resultSet.next();
+                System.out.println("Member ID: " + resultSet.getInt("id"));
+                System.out.println("First Name: " + resultSet.getString("first_name"));
+                System.out.println("Last Name: " + resultSet.getString("last_name"));
+                System.out.println("Goal Weight: " + resultSet.getDouble("goal_weight"));
+                System.out.println("Timeline: " + resultSet.getString("timeline"));
+                System.out.println("Goal Workout: " + resultSet.getString("goal_workout"));
+                System.out.println("Height: " + resultSet.getDouble("height"));
+                System.out.println("Weight: " + resultSet.getDouble("weight"));
+                System.out.println("Body Fat Percentage: " + resultSet.getDouble("bf_percentage"));
+                System.out.println("Routine: " + resultSet.getString("routine"));
+                System.out.println();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
+
+}
     public void initializeTrainer(Scanner scanner){
 
         setUserType(Trainer);
@@ -132,7 +176,7 @@ public class Trainer extends User {
         setLastName(scanner.next());
         System.out.println("enter your password");
         setPassword(scanner.next());
-        if(authenticate(connection)){
+        if(authenticate(connection,"Trainer")){
             //populate member object
             populateTrainer(connection);
             return true;

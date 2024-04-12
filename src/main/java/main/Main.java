@@ -19,13 +19,15 @@ public class Main {
             System.out.println(e);
         }
         //Program starts
+        int choice = 0;
+        do {
         System.out.println("============Welcome to gym============\nAre you 1. Member 2. Trainer 3. Admin 4. Exit");
         Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
+        choice = scanner.nextInt();
         // if they are registering
-        do {
+
             if (choice == 1) {
-                System.out.println("Sign in as: 1. New User 2. Existing user");
+                System.out.println("Sign in as: 1. New User 2. Existing user 3. Main Menu");
                 int choice2 = scanner.nextInt();
                 switch (choice2) {
                     case 1:
@@ -86,7 +88,14 @@ public class Main {
                             }
 
                         } while (flag);
+                        break;
+                    case 3:
+                        System.out.println("Exiting...");
+                        flag = false;
+                        choice = 99;
+                        break;
                 }
+
                 if (choice2 == 1) {
 
                 } else if (choice2 == 2) {
@@ -96,9 +105,9 @@ public class Main {
 
             }
             // Trainer functions
-            // TODO: for ammar
+
             else if (choice == 2) {
-                System.out.println("Are you: 1. New Trainer 2. Existing Trainer 3. Exit");
+                System.out.println("Are you: 1. New Trainer 2. Existing Trainer 3. Main Menu");
                 int typeOfTrainer = scanner.nextInt();
                 switch (typeOfTrainer) {
                     case 1:
@@ -128,7 +137,7 @@ public class Main {
                         boolean flag = true;
                         do {
                             System.out.println("==========Main Menu==========");
-                            System.out.println("1. View Sessions\n2. View Profile\n3. Add Session\n4. Exit");
+                            System.out.println("1. View Sessions\n2. View Profile\n3. Add Session\n4. View Members\n5. Exit");
                             int userSelect = scanner.nextInt();
                             switch (userSelect) {
                                 case 1:
@@ -150,6 +159,9 @@ public class Main {
                                     trainer.addSession(scanner);
                                     break;
                                 case 4:
+                                    trainer.viewMembers();
+                                    break;
+                                case 5:
                                     flag = false;
                                     // exit
                                     break;
@@ -161,6 +173,7 @@ public class Main {
                     case 3:
                         System.out.println("Exiting...");
                         flag = false;
+                        choice = 99;
                         break;
                     // leave the switch statement
                     default:
@@ -170,7 +183,7 @@ public class Main {
 
 
             } else if (choice == 3) {
-                System.out.println("Are you: 1. New Admin 2. Existing Admin");
+                System.out.println("Are you: 1. New Admin 2. Existing Admin 3. Main Menu");
                 int typeOfAdmin = scanner.nextInt();
                 switch (typeOfAdmin) {
                     case 1:
@@ -179,12 +192,11 @@ public class Main {
                         // add to db
                         try (Connection connection = DbUtil.connect();) {
                             addUserToDb(admin);
-                            //System.out.println("Congratulations! You have successfully registered!\nPlease sign in again to access your dashboard.");
+                            System.out.println("Congratulations! You have successfully registered!\nPlease sign in again to access your dashboard.");
                         } catch (Exception e) {
                             System.out.println(e);
                         }
                         //write trainer to database
-                        break;
                     case 2:
                         boolean isExists = false;
                         do {
@@ -199,7 +211,7 @@ public class Main {
                         boolean flag = true;
                         do {
                             System.out.println("==========Main Menu==========");
-                            System.out.println("1. Process Payment\n2. classScheduleUpdating\n3. maintnenace\n4. Exit\n");
+                            System.out.println("1. Process Payment\n2. Class Schedule Updating\n3. Maintnenace\n4. Exit\n");
                             int userSelect = scanner.nextInt();
                             switch (userSelect) {
                                 case 1:
@@ -209,10 +221,10 @@ public class Main {
                                 case 2:
                                     admin.classScheduleUpdating(scanner, conn);
                                     break;
-//                            case 3:
+                                case 3:
 //                                // manage schedule
-//                                admin.addSession(scanner);
-//                                break;
+                                    admin.maintenance(scanner);
+                                    break;
                                 case 4:
                                     flag = false;
                                     // exit
@@ -223,31 +235,15 @@ public class Main {
                             }
                         } while (flag);
                         break;
+                    case 3:
+                        System.out.println("Exiting...");
+                        flag = false;
+                        choice = 99;
+                        break;
                     default:
-                        System.out.println("Invalid type of trainer");
+                        System.out.println("Invalid type of Admin");
                         break;
                 }
-//                System.out.println("are you: 1. new admin 2. existing admin");
-//                int choice4 = scanner.nextInt();
-//                if (choice4 == 1) {
-//                    Admin admin = new Admin();
-//                    System.out.println("enter your first name");
-//                    admin.setFirstName(scanner.next());
-//                    System.out.println("enter your last name");
-//                    admin.setLastName(scanner.next());
-//                    System.out.println("enter your password");
-//                    admin.setPassword(scanner.next());
-//
-//                    //write admin to database
-//                } else if (choice4 == 2) {
-//                    System.out.println("enter your first name");
-//                    String firstname = scanner.next();
-//                    System.out.println("enter your last name");
-//                    String lastname = scanner.next();
-//                    System.out.println("enter your password");
-//                    String password = scanner.next();
-//                    // check if admin exists
-//                }
             }
         }
         while (choice != 4);

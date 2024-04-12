@@ -1,14 +1,9 @@
 //yaman
 package main;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.Scanner;
-import java.sql.Connection;
-import java.sql.ResultSet;
-
 
 
 public class Member extends User {
@@ -93,15 +88,24 @@ public class Member extends User {
         setLastName(scanner.next());
         System.out.println("enter your password");
         setPassword(scanner.next());
-        if(authenticate(connection)){
+        if (authenticate(connection, "Member")) {
             //populate member object
             populateMember(connection);
+            System.out.println("user is a member for reallzy");
             return true;
         }else{
             return false;
         }
+//        if(authenticate(connection)){
+//            //populate member object
+//            populateMember(connection);
+//            return true;
+//        }else{
+//            return false;
+//        }
         // check if member exists
     }
+
     public void populateMember(Connection connection) throws SQLException {
         //populate member object
         System.out.println("populating member object");
@@ -314,13 +318,13 @@ public class Member extends User {
     }
     public void updateSchedule(Scanner scanner){
         /*
-                how to do this:
-                get from table sessions: start time, end time, trainer id, and check that member id is empty, and boolean
-                split if bool then here
-                group:
-                or if false then here
-                let them pick session id(check if has members or no)
-                then update the session table with member id
+            how to do this:
+            get from table sessions: start time, end time, trainer id, and check that member id is empty, and boolean
+            split if bool then here
+            group:
+            or if false then here
+            let them pick session id(check if has members or no)
+            then update the session table with member id
                  */
         System.out.println("Would you like to register or unregister for a session? 1. Register 2. Unregister");
         int choice = scanner.nextInt();
@@ -335,7 +339,8 @@ public class Member extends User {
                         // show available group sessions
                         showSessionGroups(true);
                         // let them pick session id
-                        registerForSession(scanner);
+                        registerForGroupSession(scanner); //newnewnewnew
+                        //registerForSession(scanner);
                         // update session table with member id
                         break;
                     case 2:
@@ -343,6 +348,7 @@ public class Member extends User {
                         // show available sessions
                         showSessionGroups(false);
                         // let them pick session id
+                        // register for group session:
                         registerForSession(scanner);
                         // update session table with member id
                         break;
@@ -429,7 +435,7 @@ public class Member extends User {
         if (choice == 2) {
             return;
         }
-        System.out.println("enter the # for session id you want to register for");
+        System.out.println("Enter the # for session id you want to register for");
         int sessionID = scanner.nextInt();
         // update session table with member id
         String sql = "UPDATE Sessions SET member_id = ? WHERE session_id = "+ sessionID;
@@ -440,6 +446,52 @@ public class Member extends User {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+    public void registerForGroupSession(Scanner scanner){
+        System.out.println("Would you like to register for a group session? 1. Yes 2. No");
+        int choice = scanner.nextInt();
+        if (choice == 2) {
+            return;
+        }
+        System.out.println("Enter the # for session id you want to register for");
+        // get the session information
+        // make new tuple with same information but with new member id
+        int sessionID = scanner.nextInt();
+        String sql = "SELECT * FROM Sessions where is_group is not null";
+        try (Connection connection = DbUtil.connect();
+             Statement statement = connection.createStatement()) {
+            statement.executeQuery(sql);
+            ResultSet resultSet = statement.getResultSet();
+            while (resultSet.next()) {
+
+                int trainerid = resultSet.getInt("trainer_id");
+                int memberid = resultSet.getInt("member_id");
+                Time start_time = resultSet.getTime("start_time");
+                Time end_time = resultSet.getTime("end_time");
+                Date date = resultSet.getDate("date");
+                int room_number = resultSet.getInt("room_number");
+                boolean is_group = resultSet.getBoolean("is_group");
+                // insert new tuple
+                String insert = "INSERT into Sessions (member_id, trainer_id, start_time, end_time, date, room_number, is_group) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                try (PreparedStatement pstmt = connection.prepareStatement(insert)) {
+                    pstmt.setInt(1, getId());
+                    pstmt.setInt(2, trainerid);
+                    pstmt.setTime(3, start_time);
+                    pstmt.setTime(4, end_time);
+                    pstmt.setDate(5, date);
+                    pstmt.setInt(6, room_number);
+                    pstmt.setBoolean(7, is_group);
+                    pstmt.executeUpdate();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+
+
     }
     private void unRegisterSessions(Scanner scanner){
         System.out.println("Would you like to unregister for a session? 1. Yes 2. No");

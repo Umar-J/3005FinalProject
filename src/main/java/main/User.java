@@ -111,6 +111,7 @@ public abstract class User {
     }
     public boolean authenticate(Connection connection) {
         System.out.println("authenticating user");
+
         try {
             String query = "SELECT * FROM users WHERE first_name = ? AND last_name = ? AND password = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -122,6 +123,41 @@ public abstract class User {
             resultSet.next();
             try{
                 resultSet.getInt("id");
+            }catch (SQLException e){
+                System.out.println("user no exist");
+                return false;
+            }
+            id = resultSet.getInt("id");
+            userTypeString = resultSet.getString("user_type");
+            firstName = resultSet.getString("first_name");
+            lastName = resultSet.getString("last_name");
+            setId(id);
+            setUserType(userType);
+            System.out.println("User found! \nUser details: \n id: " + id + " \n user type: " + userType + "\n name: " + firstName + " " + lastName);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+    public boolean authenticate(Connection connection, String userTypeEnteredByUser) {
+        System.out.println("authenticating user with extra stuff");
+
+        try {
+            String query = "SELECT * FROM users WHERE first_name = ? AND last_name = ? AND password = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, firstName);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setString(3, password);
+            preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.getResultSet();
+            resultSet.next();
+            try{
+                resultSet.getInt("id");
+                if (!resultSet.getString("user_type").equals(userTypeEnteredByUser)){
+                    System.out.println("user type does not match");
+                    return false;
+                }
             }catch (SQLException e){
                 System.out.println("user no exist");
                 return false;

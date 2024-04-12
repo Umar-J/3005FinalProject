@@ -67,7 +67,7 @@ public class Admin extends User {
 
     public void maintenance(Scanner scanner){
         System.out.println("What would you like to do?");
-        System.out.println("1. Update Availability \n2. Equipment Maintenance updating\n3.Exit");
+        System.out.println("1. Update Availability \n2. Equipment Maintenance Updating\n3.Exit");
         int choice = scanner.nextInt();
         switch (choice){
             case 1:
@@ -91,7 +91,7 @@ public class Admin extends User {
                 showEquipment();
                 System.out.println("enter the equipment ID maintenance was performed on:");
                 int equipmentID2 = scanner.nextInt();
-                String sql2 = "UPDATE Equipment SET last_checkup = ?, is_available = true WHERE equipment_id = ?";
+                String sql2 = "UPDATE Equipment SET check_update = ?, is_available = true WHERE equipment_id = ?";
                 try (Connection connection = DbUtil.connect();
                      PreparedStatement pstmt = connection.prepareStatement(sql2)) {
                     pstmt.setDate(1, Date.valueOf(LocalDate.now()));
@@ -123,7 +123,7 @@ public class Admin extends User {
                 System.out.println("End Time: " + resultSet.getTime("end_time"));
                 System.out.println("Date: " + resultSet.getDate("date"));
                 System.out.println("Room Number: " + resultSet.getInt("room_number"));
-                //System.out.println(": " + resultSet.getDate("end_date"));
+
                 System.out.println();
             }
         } catch (SQLException e) {
@@ -143,11 +143,11 @@ public class Admin extends User {
             switch (choice){
                 case 1:
                     System.out.println("Enter new start time");
-                    String startTime = scanner.next();
+                    Time startTime = Time.valueOf(scanner.next());
                     String sql3 = "UPDATE Sessions SET start_time = ? WHERE session_id = ?";
                     try (Connection connection = DbUtil.connect();
                          PreparedStatement pstmt = connection.prepareStatement(sql3)) {
-                        pstmt.setString(1, startTime);
+                        pstmt.setTime(1, startTime);
                         pstmt.setInt(2, sessionID);
                         pstmt.executeUpdate();
                     } catch (SQLException e) {
@@ -156,11 +156,11 @@ public class Admin extends User {
                     break;
                 case 2:
                     System.out.println("Enter new end time");
-                    String endTime = scanner.next();
+                    Time endTime = Time.valueOf(scanner.next());
                     String sql4 = "UPDATE Sessions SET end_time = ? WHERE session_id = ?";
                     try (Connection connection = DbUtil.connect();
                          PreparedStatement pstmt = connection.prepareStatement(sql4)) {
-                        pstmt.setString(1, endTime);
+                        pstmt.setTime(1, endTime);
                         pstmt.setInt(2, sessionID);
                         pstmt.executeUpdate();
                     } catch (SQLException e) {
@@ -169,11 +169,11 @@ public class Admin extends User {
                     break;
                 case 3:
                     System.out.println("Enter new date");
-                    String date = scanner.next();
+                    Date date = Date.valueOf(scanner.next());
                     String sql5 = "UPDATE Sessions SET date = ? WHERE session_id = ?";
                     try (Connection connection = DbUtil.connect();
                          PreparedStatement pstmt = connection.prepareStatement(sql5)) {
-                        pstmt.setString(1, date);
+                        pstmt.setDate(1, date);
                         pstmt.setInt(2, sessionID);
                         pstmt.executeUpdate();
                     } catch (SQLException e) {
@@ -221,10 +221,7 @@ public class Admin extends User {
                     break;
                 case 7:
                     break;
-
             }
-//            sendUpdates();
-//        }
     }
 
     public void processPayment(Scanner scanner){

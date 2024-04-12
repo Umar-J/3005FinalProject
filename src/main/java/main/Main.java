@@ -105,7 +105,7 @@ public class Main {
 
             }
             // Trainer functions
-            // TODO: for ammar
+
             else if (choice == 2) {
                 System.out.println("Are you: 1. New Trainer 2. Existing Trainer 3. Main Menu");
                 int typeOfTrainer = scanner.nextInt();

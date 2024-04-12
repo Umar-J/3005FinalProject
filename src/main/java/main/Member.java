@@ -404,7 +404,7 @@ public class Member extends User {
         System.out.println("Showing sessions for group: \n " + group);
         String sql;
         if (group){
-             sql = "SELECT * FROM Sessions WHERE is_group is not null";
+             sql = "SELECT * FROM Sessions WHERE member_id is null and is_group is not null";
         }else{
              sql = "SELECT * FROM Sessions WHERE member_id is null AND is_group is null";
         }

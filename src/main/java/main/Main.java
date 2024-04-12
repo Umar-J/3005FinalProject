@@ -8,6 +8,8 @@ import java.util.Scanner;
 
 
 public class Main {
+    private static Connection conn;
+
     public static void main(String[] args) {
         //Establishing connection
         System.out.println("testing connection");
@@ -160,7 +162,7 @@ public class Main {
                         System.out.println("Exiting...");
                         flag = false;
                         break;
-                        // leave the switch statement
+                    // leave the switch statement
                     default:
                         System.out.println("Invalid type of trainer");
                         break;
@@ -168,29 +170,89 @@ public class Main {
 
 
             } else if (choice == 3) {
-                System.out.println("are you: 1. new admin 2. existing admin");
-                int choice4 = scanner.nextInt();
-                if (choice4 == 1) {
-                    // Admin admin = new Admin();
-                    System.out.println("enter your first name");
-                    //admin.firstname = scanner.next();
-                    System.out.println("enter your last name");
-                    //admin.lastname = scanner.next();
-                    System.out.println("enter your password");
-                    //admin.password = scanner.next();
-                    //write admin to database
-                } else if (choice4 == 2) {
-                    System.out.println("enter your first name");
-                    String firstname = scanner.next();
-                    System.out.println("enter your last name");
-                    String lastname = scanner.next();
-                    System.out.println("enter your password");
-                    String password = scanner.next();
-                    // check if admin exists
+                System.out.println("Are you: 1. New Admin 2. Existing Admin");
+                int typeOfAdmin = scanner.nextInt();
+                switch (typeOfAdmin) {
+                    case 1:
+                        Admin admin = new Admin();
+                        admin.initializeAdmin(scanner);
+                        // add to db
+                        try (Connection connection = DbUtil.connect();) {
+                            addUserToDb(admin);
+                            //System.out.println("Congratulations! You have successfully registered!\nPlease sign in again to access your dashboard.");
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                        //write trainer to database
+                        break;
+                    case 2:
+                        boolean isExists = false;
+                        do {
+                            // check if trainer exists
+                            admin = new Admin();
+                            try (Connection connection = DbUtil.connect();) {
+                                isExists = admin.authenticateAdmin(scanner, connection);
+                            } catch (Exception e) {
+                                System.out.println(e);
+                            }
+                        } while (!isExists);
+                        boolean flag = true;
+                        do {
+                            System.out.println("==========Main Menu==========");
+                            System.out.println("1. Process Payment\n2. classScheduleUpdating\n3. maintnenace\n4. Exit\n");
+                            int userSelect = scanner.nextInt();
+                            switch (userSelect) {
+                                case 1:
+                                    // payment
+                                    admin.processPayment(scanner);
+                                    break;
+                                case 2:
+                                    admin.classScheduleUpdating(scanner, conn);
+                                    break;
+//                            case 3:
+//                                // manage schedule
+//                                admin.addSession(scanner);
+//                                break;
+                                case 4:
+                                    flag = false;
+                                    // exit
+                                    break;
+                                default:
+                                    System.out.println("Invalid selection");
+                                    break;
+                            }
+                        } while (flag);
+                        break;
+                    default:
+                        System.out.println("Invalid type of trainer");
+                        break;
                 }
+//                System.out.println("are you: 1. new admin 2. existing admin");
+//                int choice4 = scanner.nextInt();
+//                if (choice4 == 1) {
+//                    Admin admin = new Admin();
+//                    System.out.println("enter your first name");
+//                    admin.setFirstName(scanner.next());
+//                    System.out.println("enter your last name");
+//                    admin.setLastName(scanner.next());
+//                    System.out.println("enter your password");
+//                    admin.setPassword(scanner.next());
+//
+//                    //write admin to database
+//                } else if (choice4 == 2) {
+//                    System.out.println("enter your first name");
+//                    String firstname = scanner.next();
+//                    System.out.println("enter your last name");
+//                    String lastname = scanner.next();
+//                    System.out.println("enter your password");
+//                    String password = scanner.next();
+//                    // check if admin exists
+//                }
             }
-        } while (choice != 4);
+        }
+        while (choice != 4);
     }
+
 
     public static void addUserToDb(User user) {
         try (Connection connection = DbUtil.connect();) {
@@ -199,6 +261,7 @@ public class Main {
             System.out.println(e);
         }
     }
-
 }
+
+
 

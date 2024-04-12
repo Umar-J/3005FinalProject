@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class DbUtil {
     private static final String url = "jdbc:postgresql://localhost:5432/3005Final";
     private static final String user = "postgres";
-    static final String password = "umarjan";
+    static final String password = "Yaman2003!";
 
     /**
      * This method is used to establish a connection to the PostgreSQL database.

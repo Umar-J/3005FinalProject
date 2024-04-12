@@ -137,7 +137,7 @@ public class Main {
                         boolean flag = true;
                         do {
                             System.out.println("==========Main Menu==========");
-                            System.out.println("1. View Sessions\n2. View Profile\n3. Add Session\n4. Exit");
+                            System.out.println("1. View Sessions\n2. View Profile\n3. Add Session\n4. View Members\n5. Exit");
                             int userSelect = scanner.nextInt();
                             switch (userSelect) {
                                 case 1:
@@ -159,6 +159,9 @@ public class Main {
                                     trainer.addSession(scanner);
                                     break;
                                 case 4:
+                                    trainer.viewMembers();
+                                    break;
+                                case 5:
                                     flag = false;
                                     // exit
                                     break;

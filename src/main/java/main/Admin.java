@@ -32,7 +32,7 @@ public class Admin extends User {
         setLastName(scanner.next());
         System.out.println("enter your password");
         setPassword(scanner.next());
-        if (authenticate(connection)) {
+        if (authenticate(connection, "Admin")) {
             //populate member object
             populateAdmin(connection);
             return true;

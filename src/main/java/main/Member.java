@@ -93,15 +93,24 @@ public class Member extends User {
         setLastName(scanner.next());
         System.out.println("enter your password");
         setPassword(scanner.next());
-        if(authenticate(connection)){
+        if (authenticate(connection, "Member")) {
             //populate member object
             populateMember(connection);
+            System.out.println("user is a member for reallzy");
             return true;
         }else{
             return false;
         }
+//        if(authenticate(connection)){
+//            //populate member object
+//            populateMember(connection);
+//            return true;
+//        }else{
+//            return false;
+//        }
         // check if member exists
     }
+
     public void populateMember(Connection connection) throws SQLException {
         //populate member object
         System.out.println("populating member object");
@@ -314,13 +323,13 @@ public class Member extends User {
     }
     public void updateSchedule(Scanner scanner){
         /*
-                how to do this:
-                get from table sessions: start time, end time, trainer id, and check that member id is empty, and boolean
-                split if bool then here
-                group:
-                or if false then here
-                let them pick session id(check if has members or no)
-                then update the session table with member id
+            how to do this:
+            get from table sessions: start time, end time, trainer id, and check that member id is empty, and boolean
+            split if bool then here
+            group:
+            or if false then here
+            let them pick session id(check if has members or no)
+            then update the session table with member id
                  */
         System.out.println("Would you like to register or unregister for a session? 1. Register 2. Unregister");
         int choice = scanner.nextInt();

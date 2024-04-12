@@ -179,12 +179,11 @@ public class Main {
                         // add to db
                         try (Connection connection = DbUtil.connect();) {
                             addUserToDb(admin);
-                            //System.out.println("Congratulations! You have successfully registered!\nPlease sign in again to access your dashboard.");
+                            System.out.println("Congratulations! You have successfully registered!\nPlease sign in again to access your dashboard.");
                         } catch (Exception e) {
                             System.out.println(e);
                         }
                         //write trainer to database
-                        break;
                     case 2:
                         boolean isExists = false;
                         do {
@@ -199,7 +198,7 @@ public class Main {
                         boolean flag = true;
                         do {
                             System.out.println("==========Main Menu==========");
-                            System.out.println("1. Process Payment\n2. classScheduleUpdating\n3. maintnenace\n4. Exit\n");
+                            System.out.println("1. Process Payment\n2. Class Schedule Updating\n3. Maintnenace\n4. Exit\n");
                             int userSelect = scanner.nextInt();
                             switch (userSelect) {
                                 case 1:
@@ -209,10 +208,10 @@ public class Main {
                                 case 2:
                                     admin.classScheduleUpdating(scanner, conn);
                                     break;
-//                            case 3:
+                                case 3:
 //                                // manage schedule
-//                                admin.addSession(scanner);
-//                                break;
+                                    admin.maintenance(scanner);
+                                    break;
                                 case 4:
                                     flag = false;
                                     // exit

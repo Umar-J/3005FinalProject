@@ -4,7 +4,6 @@ DROP TABLE IF EXISTS TrainerAvailability;
 DROP TABLE IF EXISTS Achievements;
 DROP TABLE IF EXISTS MemberAttributes;
 DROP TABLE IF EXISTS Users;
-DROP TYPE IF EXISTS routine_type;
 
 CREATE TABLE Users (
     id SERIAL PRIMARY KEY,

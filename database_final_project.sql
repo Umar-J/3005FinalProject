@@ -6,8 +6,6 @@ DROP TABLE IF EXISTS MemberAttributes;
 DROP TABLE IF EXISTS Users;
 DROP TYPE IF EXISTS routine_type;
 
-CREATE TYPE routine_type AS ENUM ('upper', 'lower', 'cardio', 'full body', 'rest');
-
 CREATE TABLE Users (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
@@ -25,7 +23,7 @@ CREATE TABLE MemberAttributes (
     weight DECIMAL,
     bf_percentage DECIMAL,
     routine VARCHAR(255),
-    payment_status VARCHAR(50),
+    payment_status boolean,
     plan VARCHAR(255),   
     foreign key (id) references Users(id)
 );
@@ -49,7 +47,7 @@ CREATE TABLE equipment (
     equipment_id SERIAL PRIMARY KEY,
     name VARCHAR(255),
     check_update DATE,
-    bool_is_available BOOLEAN
+    is_available BOOLEAN
 );
 
 CREATE TABLE Sessions (

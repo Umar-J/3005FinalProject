@@ -181,7 +181,7 @@ public class Member extends User {
     }
     public void updateInformation(Scanner scanner){
         System.out.println("What would you like to update?");
-        System.out.println("1. Goal Weight\n2. Goal Workout\n3. Height\n4. Weight\n5. Body Fat Percentage\n6. Routine\n7. Timeline");
+        System.out.println("1. Goal Weight\n2. Goal Workout\n3. Height\n4. Weight\n5. Body Fat Percentage\n6. Routine\n7. Add Achievement \n8. Timeline");
         int choice = scanner.nextInt();
         switch (choice){
             case 1:
@@ -209,6 +209,20 @@ public class Member extends User {
                 routine = scanner.next();
                 break;
             case 7:
+                System.out.println("Enter new achievement:");
+                scanner.nextLine();
+                String achievement = scanner.nextLine();                //add achievement to database
+                String sql = "INSERT INTO Achievements (id, achievements_user) VALUES (?, ?)";
+                try (Connection connection = DbUtil.connect();
+                     PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                    pstmt.setInt(1, getId());
+                    pstmt.setString(2, achievement);
+                    pstmt.executeUpdate();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+                break;
+            case 8:
                 System.out.println("Enter new timeline");
                 String date = scanner.next();
                 timeLine = LocalDate.parse(date);
@@ -233,7 +247,7 @@ public class Member extends User {
             pstmt.setDouble(5, weight);
             pstmt.setDouble(6, bf);
             pstmt.setString(7, routine);
-            pstmt.setString(8, Boolean.toString(paymentStatus));
+            pstmt.setBoolean(8, (paymentStatus));
             pstmt.setString(9, Integer.toString(plan));
 
             pstmt.executeUpdate();

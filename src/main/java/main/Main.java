@@ -27,7 +27,7 @@ public class Main {
         // if they are registering
 
             if (choice == 1) {
-                System.out.println("Sign in as: 1. New User 2. Existing user 3. Main Menu");
+                System.out.println("Sign in as: 1. New Member 2. Existing Member 3. Main Menu");
                 int choice2 = scanner.nextInt();
                 switch (choice2) {
                     case 1:

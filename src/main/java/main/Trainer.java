@@ -139,7 +139,7 @@ public void viewMembers(){
                 System.out.println("Routine: " + resultSet.getString("routine"));
                 System.out.println();
             } catch (SQLException e) {
-                //System.out.println(e.getMessage());
+                System.out.println(e.getMessage());
             }
         }
 
@@ -189,13 +189,12 @@ public void viewMembers(){
 
     public void populateTrainer(Connection connection) throws SQLException {
         //populate member object
-        System.out.println("populating member object");
+        System.out.println("Populating trainer object\n");
         String sql = "SELECT * FROM TrainerAvailability WHERE trainer_id = "+getId();
         Statement statement = connection.createStatement();
         statement.executeQuery(sql);
         ResultSet resultSet = statement.getResultSet();
         resultSet.next();
-        //setId(); = resultSet.getInt("trainer_id");
         startTime = resultSet.getTime("start_time").toLocalTime();
         endTime = resultSet.getTime("end_time").toLocalTime();
         startDate = resultSet.getDate("start_date").toLocalDate();
@@ -257,9 +256,11 @@ public void viewMembers(){
         int roomNumber = scanner.nextInt();
         System.out.println("is this a group session? (true/false): ");
         boolean isGroup = scanner.nextBoolean();
+        System.out.println("enter the equipment id: 1. Treadmill 2. Dumbbells 3. Barbell 4. Kettlebell");
+        int equipmentId = scanner.nextInt();
 
 
-        String sql = "INSERT INTO Sessions (trainer_id, start_time, end_time, date, room_number, is_group) VALUES (?, ?, ?, ?, ?,?)";
+        String sql = "INSERT INTO Sessions (trainer_id, start_time, end_time, date, room_number, is_group, equipment_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection connection = DbUtil.connect();) {
             try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
                 pstmt.setInt(1, getId());
@@ -268,6 +269,7 @@ public void viewMembers(){
                 pstmt.setDate(4, dateOfSession);
                 pstmt.setInt(5, roomNumber);
                 pstmt.setBoolean(6, isGroup);
+                pstmt.setInt(7, equipmentId);
                 pstmt.executeUpdate();
             } catch (SQLException e) {
                 System.out.println(e.getMessage());

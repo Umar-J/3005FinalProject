@@ -277,7 +277,6 @@ public class Member extends User {
             case 1:
                 // to show personal registered sessions
                 viewSchedule();
-
                 break;
             case 2:
                // updateSchedule(scanner);

@@ -144,11 +144,12 @@ public abstract class User {
         System.out.println("authenticating user with extra stuff");
 
         try {
-            String query = "SELECT * FROM users WHERE first_name = ? AND last_name = ? AND password = ?";
+            String query = "SELECT * FROM users WHERE first_name = ? AND last_name = ? AND password = ? and user_type = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, firstName);
             preparedStatement.setString(2, lastName);
             preparedStatement.setString(3, password);
+            preparedStatement.setString(4, userTypeEnteredByUser);
             preparedStatement.executeQuery();
             ResultSet resultSet = preparedStatement.getResultSet();
             resultSet.next();

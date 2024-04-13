@@ -118,6 +118,7 @@ public void viewMembers(){
             System.out.println(e.getMessage());
         }
         // use memberIds to get member names
+
         List<Integer> memberIds = new ArrayList<>(memberIds2);
         for (int i = 0; i < memberIds.size(); ++i){
             String sql2 = "SELECT * FROM users JOIN memberattributes ON users.id = memberattributes.id WHERE users.id = "+memberIds.get(i);
@@ -138,7 +139,7 @@ public void viewMembers(){
                 System.out.println("Routine: " + resultSet.getString("routine"));
                 System.out.println();
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                //System.out.println(e.getMessage());
             }
         }
 

@@ -6,10 +6,12 @@ Umar Jan:
 - Admin and member functions
 - main control flow
 - database design
+
 Ammar Heeramun:
 - Trainer Functions
 - ddl file
 - databse design
+
 Mohammed Al-Rajab"
 - ER model
 - dml file

@@ -1,6 +1,20 @@
 # Comp 3005 Final Project
 By: Umar Jan, Ammar Heeramun, Mohammed Al-Rajab
 
+Participation:
+Umar Jan: 
+- Admin and member functions
+- main control flow
+- database design
+Ammar Heeramun:
+- Trainer Functions
+- ddl file
+- databse design
+Mohammed Al-Rajab"
+- ER model
+- dml file
+- relationship schema
+
 This is a gym management application written in Java using a postgresql database
 
 ## Prerequisites

@@ -34,8 +34,7 @@ INSERT INTO Equipment ( name, check_update, is_available) VALUES
 ('Kettlebell', CURRENT_TIMESTAMP, FALSE);
 -- Insert into Sessions
 INSERT INTO Sessions (
-    trainer_id, 
-    member_id, 
+    trainer_id,  
     start_time, 
     end_time, 
     date, 
@@ -43,5 +42,5 @@ INSERT INTO Sessions (
     room_number, 
     equipment_id
 ) VALUES
-(2, 1, '09:00', '10:00', '2024-04-12', FALSE, 50, 1),
-(2, 1, '11:00', '12:00', '2024-04-13', TRUE, 51, 2);
+(2, '09:00', '10:00', '2024-04-12', FALSE, 50, 1),
+(2, '11:00', '12:00', '2024-04-13', TRUE, 51, 2);

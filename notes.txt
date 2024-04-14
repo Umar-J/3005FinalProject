@@ -1,5 +1,0 @@
-3 mins for first problem(loop register)
-10 mins for updating sessions function
-11 mins for equipment
-
-grand total of 24 mins

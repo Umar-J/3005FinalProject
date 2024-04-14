@@ -138,7 +138,7 @@ public class Admin extends User {
         System.out.println("Enter the session ID you would like to update:");
         int sessionID = scanner.nextInt();
             System.out.println("What would you like to update?");
-            System.out.println("\n1. start time\n2. end time\n3. date\n4. group\n5. room number\n6. exit");
+            System.out.println("\n1. start time\n2. end time\n3. date\n4. group\n5. room number\n6. edit equipment\n7. exit");
             int choice = scanner.nextInt();
             switch (choice){
                 case 1:
